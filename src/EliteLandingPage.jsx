@@ -38,7 +38,7 @@ export default function EliteLandingPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          access_key: import.meta.env.VITE_WEB3FORMS_KEY,
+          access_key: '31679ee4-ff23-4b4b-bf44-79a8e592bf8b',
           subject: `New Elite Audit Request — ${lead.firm || lead.name}`,
           from_name: lead.name,
           name: lead.name,
