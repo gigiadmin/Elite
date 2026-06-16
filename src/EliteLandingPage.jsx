@@ -28,12 +28,35 @@ const UserGroupIcon = () => (
 export default function EliteLandingPage() {
   const [lead, setLead] = useState({ name: '', email: '', firm: '', phone: '', industry: 'Legal' });
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Harry: Insert your endpoint or CRM integration here
-    console.log('Lead submitted:', lead);
-    setSubmitted(true);
+    setError(false);
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: import.meta.env.VITE_WEB3FORMS_KEY,
+          subject: `New Elite Audit Request — ${lead.firm || lead.name}`,
+          from_name: lead.name,
+          name: lead.name,
+          email: lead.email,
+          phone: lead.phone,
+          firm: lead.firm,
+          industry: lead.industry,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        setError(true);
+      }
+    } catch {
+      setError(true);
+    }
   };
 
   return (
@@ -305,11 +328,16 @@ export default function EliteLandingPage() {
                   </div>
                   <h3 className="text-2xl font-bold mb-2">Audit Scheduled!</h3>
                   <p className="text-slate-400 text-sm">
-                    Thank you, Harry. We have received your request and will reach out to schedule your 15-minute diagnostic within one business hour.
+                    Thank you! We have received your request and will reach out to schedule your 15-minute diagnostic within one business hour.
                   </p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {error && (
+                    <p className="text-rose-400 text-sm text-center bg-rose-500/10 border border-rose-500/30 rounded-xl px-4 py-3">
+                      Something went wrong. Please try again or call (727) 382-6909.
+                    </p>
+                  )}
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Full Name</label>
                     <input 
